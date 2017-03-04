@@ -1,0 +1,14 @@
+{
+  "name": "MovieListApp",
+  "version": "1.0.0",
+  "description": "Test",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "eslint": "^3.1.0",
+    "eslint-config-google": "^0.6.0"
+  },
+  "author": [
+    "Logan Scheiner",
+  ]
+}

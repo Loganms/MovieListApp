@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>MovieListApp</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+
+        <link rel="stylesheet" href="css/bootstrap.css">
+        <link rel="stylesheet" href="css/movielistapp.css">
+    </head>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.3.0/ui-bootstrap-tpls.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-sanitize.min.js"></script>
+
+<script src="movielistapp.js"></script>
+<script src="Home/homeController.js"></script>
+<script src="Util/notifyDlg.js"></script>
+<script src="Util/errorDlg.js"></script>
+
+<script src="ui-routes.js"></script>    
+
+<body ng-app="mainApp">
+
+   <div ui-view class="cc-view"></div>
+
+   <div id="foot-note" class="foot-note text-center">
+     <p>&copy Logan Scheiner 2017</p>
+   </div>
+</body>
+</html>
