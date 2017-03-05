@@ -12,10 +12,10 @@ app.config(['$stateProvider', '$urlRouterProvider',
          access: {restricted: false},
          resolve: {
             movieList: ['$q', '$http', function($q, http) {
-               return []/*(http.get('/MovieList')
+               return http.get('/MovieList')
                .then(function(response) {
                   return $q.resolve(response.data)
-               });*/
+               });
             }]
          }
       }); 
