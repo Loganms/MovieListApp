@@ -61,7 +61,7 @@ export class AppComponent implements OnInit {
          
          this.movieListService.createMovieList(this.user, this.newMovieListName)
             .then(location => {
-               console.log(location);
+               console.log("resource created at: " + location);
                this.newMovieListName = '';
                this.getMovieLists();
             })

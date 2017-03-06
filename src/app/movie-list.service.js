@@ -28,7 +28,10 @@ var MovieListService = (function () {
         return this.http
             .post(this.movieListsUrl, JSON.stringify({ id: user.id, listName: listName }), { headers: this.headers })
             .toPromise()
-            .then(function (response) { return response.headers.get('Location'); })
+            .then(function (response) {
+            console.log(response);
+            return response.headers.get('location');
+        })
             .catch(this.handleError);
     };
     MovieListService.prototype.handleError = function (error) {

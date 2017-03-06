@@ -27,7 +27,10 @@ export class MovieListService {
                      JSON.stringify({id: user.id, listName: listName}),
                      {headers: this.headers})
                  .toPromise()
-                 .then(response => response.headers.get('Location'))
+                 .then(function (response) {
+                     console.log(response);
+                     return response.headers.get('location');
+                     })
                  .catch(this.handleError);
    }
    

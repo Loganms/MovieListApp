@@ -53,7 +53,7 @@ var AppComponent = (function () {
             && this.newMovieListName.length < this.movieListService.MOVIE_LIST_MAX) {
             this.movieListService.createMovieList(this.user, this.newMovieListName)
                 .then(function (location) {
-                console.log(location);
+                console.log("resource created at: " + location);
                 _this.newMovieListName = '';
                 _this.getMovieLists();
             })

@@ -36,7 +36,8 @@ $app->add(function ($req, $res, $next) {
     $response = $next($req, $res);
     return $response
             ->withHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, Location')
+            ->withHeader('Access-Control-Expose-Headers', 'Location')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 });
 // END Lazy CORS
@@ -74,14 +75,14 @@ $app->put('/User', function (Request $request, Response $response) {
       );
       return $response
            ->withStatus(201)
-           ->withHeader('Access-Control-Allow-Headers', 'location')
+           ->withHeader('Access-Control-Allow-Headers', 'Location')
            ->withHeader('Location', '/User/' . $insId)
            ->withJson($user)
            ;
    }
 });
 
-/* Returns possibly empty array of all MovieList Objects */
+/* Returns possibly empty array of all MovieList objects */
 $app->get('/MovieList', function (Request $request, Response $response) {
    $stmt = $this->db->query('SELECT * FROM MovieList');
    $stmt->execute();
@@ -90,6 +91,7 @@ $app->get('/MovieList', function (Request $request, Response $response) {
    return $response->withJson($results);
 });
 
+/* Returns one MovieList object */
 $app->get('/MovieList/{id}', function (Request $request, Response $response) {
    global $API_ERROR;
    $id = $request->getAttribute('route')->getArgument('id');
@@ -109,7 +111,7 @@ $app->get('/MovieList/{id}', function (Request $request, Response $response) {
    }
 });
 
-
+/* AU creates a new MovieList resource, URI returned in location header */
 $app->post('/MovieList', function (Request $request, Response $response) {
    global $MOVIELIST_MAX, $API_ERROR;
    $body = $request->getParsedBody();
@@ -154,7 +156,7 @@ $app->post('/MovieList', function (Request $request, Response $response) {
    
    return $response
            ->withStatus(201)
-           ->withHeader('Access-Control-Allow-Headers', 'location')
+           ->withHeader('Access-Control-Allow-Headers', 'Location')
            ->withHeader('Location', '/MovieList/' . $insId)
            ;
 });
