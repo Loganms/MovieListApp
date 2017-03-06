@@ -1,0 +1,46 @@
+<div id="header" class="cc-base-gutter">
+   <div class= "pull-left">
+      <a class="" href="/">
+      <img src="../Resources/1.png" height="50px">
+      </a>
+   </div>
+   <div class= "pull-right">
+   
+   <div *ngIf="!signedIn">
+   <label>username: </label>
+   <input [(ngModel)]="user.username" placeholder="not set">
+   <button class="btn btn-primary navbar-btn"
+           (click)=signIn(user.username)
+           [disabled]="user.username.length === 0">Fake Sign In</button>
+   </div>
+   
+   <div *ngIf="signedIn">      
+   {{user.username}}
+   <button class="btn btn-primary navbar-btn"
+           (click)=signOut(user.username)>Sign Out</button>
+   <label>New Movie List: </label>
+   <input [(ngModel)]="newMovieListName" 
+          placeholder="my movie list">
+          
+   <button class="btn btn-primary navbar-btn"
+      (click)=createMovieList()
+      [disabled]="newMovieListName.length === 0">Create</button>
+   </div>
+   </div>
+   
+</div>
+
+<div class="container cc-container">
+   <h2> Movie Lists! </h2>
+   <div class="pull-left"
+      *ngFor="let mlist of movieLists"
+      (click)="onSelectMovieList(mlist)">
+      
+      <div class="panel panel-default">
+         <div class="panel-body" 
+            [class.bg-primary]="mlist === selectedMovieList">
+            {{mlist.listName}}
+         </div>
+      </div>
+   </div>
+</div>

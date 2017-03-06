@@ -1,14 +1,8 @@
 app.controller('homeController',
-['$scope', '$state', 'movieList',
-function(scope, $state, movieList) {
+['$scope', '$state', 'movieLists',
+function(scope, $state, movieLists) {
    
-   console.log(JSON.stringify(movieList))
+   console.log(JSON.stringify(movieLists))
    
-   scope.movieList = movieList;
-   
-   scope.myInterval = 5000;
-   scope.active = 0;
-   
-
-   
+   scope.movieLists = movieLists;
 }])

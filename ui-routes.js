@@ -11,7 +11,7 @@ app.config(['$stateProvider', '$urlRouterProvider',
          controller: 'homeController',
          access: {restricted: false},
          resolve: {
-            movieList: ['$q', '$http', function($q, http) {
+            movieLists: ['$q', '$http', function($q, http) {
                return http.get('/MovieList')
                .then(function(response) {
                   return $q.resolve(response.data)

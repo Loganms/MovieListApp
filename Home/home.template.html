@@ -15,5 +15,14 @@
 </div>
 
 <div class="container cc-container">
-<h2> Movie Lists! </h2>
+   <h2> Movie Lists! </h2>
+   
+   <div class="pull-left" ng-repeat="mlist in movieLists">
+      <div class="panel panel-default">
+         <div class="panel-body">{{mlist.listName}}</div>
+      </div>
+   </div>
+
+</div>
+
 </div>
