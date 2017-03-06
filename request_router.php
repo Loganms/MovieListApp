@@ -84,7 +84,10 @@ $app->put('/User', function (Request $request, Response $response) {
 
 /* Returns possibly empty array of all MovieList objects */
 $app->get('/MovieList', function (Request $request, Response $response) {
-   $stmt = $this->db->query('SELECT * FROM MovieList');
+   $sql = 'SELECT M.id, userID, listName, username'
+         .' FROM MovieList M JOIN `User` U ON M.userID = U.id'
+         .' ORDER BY M.id DESC';
+   $stmt = $this->db->query($sql);
    $stmt->execute();
    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
    
