@@ -15,23 +15,47 @@ var MovieListService = (function () {
     function MovieListService(http) {
         this.http = http;
         this.MOVIE_LIST_MAX = 40;
+        this.MOVIE_MAX = 100;
         this.headers = new http_1.Headers({ 'Content-Type': 'application/json' });
         this.movieListsUrl = ' http://localhost/MovieList';
     }
+    // GET /MovieList
     MovieListService.prototype.getMovieLists = function () {
         return this.http.get(this.movieListsUrl)
             .toPromise()
             .then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
+    // GET /MovieList/{id}
+    MovieListService.prototype.getMovieList = function (id) {
+        return this.http.get(this.movieListsUrl)
+            .toPromise()
+            .then(function (response) { return response.json(); })
+            .catch(this.handleError);
+    };
+    // POST /MovieList
     MovieListService.prototype.createMovieList = function (user, listName) {
         return this.http
             .post(this.movieListsUrl, JSON.stringify({ id: user.id, listName: listName }), { headers: this.headers })
             .toPromise()
-            .then(function (response) {
-            console.log(response);
-            return response.headers.get('location');
-        })
+            .then(function (response) { return response.headers.get('location'); })
+            .catch(this.handleError);
+    };
+    // GET /MovieList/{id}/Movie
+    MovieListService.prototype.getMovies = function (id) {
+        return this.http.get(this.movieListsUrl + '/' + id + '/Movie')
+            .toPromise()
+            .then(function (response) { return response.json(); })
+            .catch(this.handleError);
+    };
+    // POST /MovieList/{id}/Movie
+    MovieListService.prototype.createMovie = function (user, listID, movieTitle) {
+        return this.http
+            .post(this.movieListsUrl + '/' + id + '/Movie', JSON.stringify({ id: user.id,
+            listID: listID,
+            movieTitle: movieTitle }), { headers: this.headers })
+            .toPromise()
+            .then(function (response) { return response.headers.get('location'); })
             .catch(this.handleError);
     };
     MovieListService.prototype.handleError = function (error) {

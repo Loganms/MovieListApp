@@ -164,5 +164,81 @@ $app->post('/MovieList', function (Request $request, Response $response) {
            ;
 });
 
+/* Returns possibly empty array of Movie objects from MovieList with {id} */
+$app->get('/MovieList/{id}/Movie', function (Request $request, Response $response) {
+   global $API_ERROR;
+   $id = $request->getAttribute('route')->getArgument('id');
+   
+   /* CHECK MOVIELIST EXISTS */
+   $sql = 'SELECT id FROM MovieList WHERE id = ?';
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$id]);
+   $movieList = $stmt->fetch(PDO::FETCH_OBJ);
+   
+   if (!$movieList) {
+      return $response
+         ->withStatus(404)
+         ->withJson($API_ERROR["resourceNotFound"]("movieList"))
+         ;
+   }
+   
+   $sql = 'SELECT * FROM Movie WHERE listID = ?';
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$id]);
+   $movies = $stmt->fetchAll(PDO::FETCH_OBJ);
+   
+   return $response->withJson($movies);
+});
+
+/* AU creates a new Movie resource, URI returned in location header */
+$app->post('/MovieList/{id}/Movie', function (Request $request, Response $response) {
+   global $MOVIE_MAX, $API_ERROR;
+   $body = $request->getParsedBody();
+   
+   if (!isset($body["id"]) ||
+      !isset($body["listID"]) ||
+      !isset($body["movieTitle"])) {
+      return $response->withStatus(400)->withJson($API_ERROR["fieldMissing"]);
+   }
+   if ((strlen($body["movieTitle"] === 0)) ||
+      (strlen($body["movieTitle"]) > $MOVIE_MAX)) {
+      return $response->withStatus(400)->withJson($API_ERROR["stringLength"]);
+   }
+   
+   /* CHECK USER */
+   $sql = "SELECT * FROM `User` WHERE id = ?";
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$body["id"]]);
+   $userExists = $stmt->fetch();
+   
+   if (!$userExists) {
+      return $response->withStatus(404)
+      ->withJson($API_ERROR["resourceNotFound"]("user"))
+      ;
+   }
+   
+   /* CHECK MOVIELIST */
+   $sql = "SELECT id WHERE id = ?";
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$body["listID"]]);
+   $movieListExists = $stmt->fetch();
+   
+   if (!$movieListExists) {
+      return $response->withStatus(404)
+      ->withJson($API_ERROR["resourceNotFound"]("movieList"));
+   }
+   
+   /* CREATE RESOURCE */
+   $sql = "INSERT INTO Movie (listID, movieTitle, rating) VALUES (?, ?, ?)";
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$body["listID"], $body["movieTitle"], $body["rating"]]);
+   $insId = $this->db->lastInsertId();
+   
+   return $response
+           ->withStatus(201)
+           ->withHeader('Access-Control-Allow-Headers', 'Location')
+           ->withHeader('Location', '/MovieList/' . $insId)
+           ;
+});
 
 $app->run();

@@ -30,7 +30,7 @@ export class AuthService {
                  .catch(this.handleError);
    }
    
-   signOut(id: number): Promise<bool> {
+   signOut(id: number): Promise<boolean> {
       return new Promise((resolve, reject) => {
          resolve(true);
       });

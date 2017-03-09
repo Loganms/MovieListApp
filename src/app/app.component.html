@@ -33,13 +33,44 @@
 <div class="container cc-container">
    <h2> Movie Lists! </h2>
    <div class="pull-left"
-      *ngFor="let mlist of movieLists"
-      (click)="onSelectMovieList(mlist)">
+      *ngFor="let mlist of movieLists" >
       
-      <div class="panel panel-default">
-         <div class="panel-body" 
-            [class.bg-primary]="mlist === selectedMovieList">
-            {{mlist.listName}} <h6>{{mlist.username}} </h6>
+      <div class="panel panel-default"
+         >
+         <div class="panel-body"
+            [ngClass]="{'bg-primary': mlist.isExpanded}">
+            
+            <div class="pull-left" (click)="mlist.isExpanded = !mlist.isExpanded;onSelectMovieList(mlist)">
+            <span class="cc-listName"> {{mlist.listName}} </span>
+            <div class="cc-listAuthor"> By {{mlist.username}} </div>
+            </div>
+            
+            <span *ngIf="mlist.userID === user.id"
+               class="pull-right glyphicon glyphicon-trash"></span>
+            
+            <div *ngIf="mlist.movies !== undefined && mlist.isExpanded">
+               <table class="table table-hover">
+               <tr *ngFor="let movie of mlist.movies">
+                  
+                  <td> {{movie.movieTitle}}</td>
+                  <td> {{movie.rating}} </td>
+                  <td *ngIf="mlist.userID === user.id"
+                     class="glyphicon glyphicon-wrench"></td>
+               
+               </tr>
+               <tr *ngIf="mlist.userID === user.id">
+                  <td><input [(ngModel)]="mlist.newMovieEntry" 
+                     placeholder="add movie entry"></td>
+                  <td><input [(ngModel)]="mlist.newMovieRating"
+                     placeholder="rating"
+                     class="cc-number-input"></td>
+                  <td class="glyphicon glyphicon-plus"
+                     (click)=addMovie(mlist)>
+                  </td>
+                  
+               </tr>
+               </table>
+            </div>  
          </div>
       </div>
    </div>

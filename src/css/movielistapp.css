@@ -77,6 +77,19 @@ form {
     max-width: 70%;
 }
 
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #fff;
+  color: #545454; 
+}
+
+.cc-listAuthor{
+   font-size: small;
+}
+
+.cc-listName{
+   font-size: large;
+}
+
 .text-center{ 
     text-align: center;
     width: 100%;
@@ -86,12 +99,9 @@ form {
    max-width: 400px;
 }
 
-.sumo_iframe{
-   height: 700px;
+.cc-number-input{
+   max-width: 3em;
 }
 
-.carousel-caption {
-   text-shadow: 0 0px 10px rgba(0, 0, 0, 0.9);
-}
 
 

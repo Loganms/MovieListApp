@@ -27,7 +27,24 @@ var AppComponent = (function () {
         this.getMovieLists();
     };
     AppComponent.prototype.onSelectMovieList = function (mlist) {
-        this.selectedMovieList = mlist;
+        if (mlist.movies === undefined)
+            this.movieListService.getMovies(mlist.id)
+                .then(function (list) { return mlist.movies = list; })
+                .catch(function (error) { return console.log("bad request acknowledged"); });
+    };
+    AppComponent.prototype.addMovie = function (mlist) {
+        var _this = this;
+        if (mlist.newMovieEntry &&
+            mlist.newMovieEntry.length > 0 &&
+            mlist.newMovieEntry.length <= this.movieListService.MOVIE_MAX) {
+            this.movieListService.addMovie(this.user, mlist.id, mlist.newMovieEntry)
+                .then(function (location) {
+                console.log("resource created at: " + location);
+                //easy way for now
+                _this.getMovieLists();
+            })
+                .catch(function (error) { return console.err("bad request acknowledged"); });
+        }
     };
     AppComponent.prototype.signIn = function (username) {
         var _this = this;
@@ -50,7 +67,7 @@ var AppComponent = (function () {
         var _this = this;
         if (this.user && this.newMovieListName &&
             this.newMovieListName.length > 0
-            && this.newMovieListName.length < this.movieListService.MOVIE_LIST_MAX) {
+            && this.newMovieListName.length <= this.movieListService.MOVIE_LIST_MAX) {
             this.movieListService.createMovieList(this.user, this.newMovieListName)
                 .then(function (location) {
                 console.log("resource created at: " + location);
@@ -60,6 +77,7 @@ var AppComponent = (function () {
                 .catch(function (error) { return console.log("bad request acknowledged"); });
         }
         else {
+            // Dialog
             console.error("couldn't begin createMovieList call.");
         }
     };

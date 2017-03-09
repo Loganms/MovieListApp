@@ -17,7 +17,6 @@ import { AuthService } from './auth.service';
 
 export class AppComponent implements OnInit {
    private title = 'Movie Lists!';
-   private selectedMovieList: MovieList;
    private movieLists: MovieList[];
    private signedIn = false;
    private user: User = {
@@ -34,7 +33,26 @@ export class AppComponent implements OnInit {
    }
       
    onSelectMovieList(mlist: MovieList): void {
-      this.selectedMovieList = mlist;
+      if (mlist.movies === undefined)
+         this.movieListService.getMovies(mlist.id)
+            .then(list => mlist.movies = list)
+            .catch(error => console.log("bad request acknowledged"));
+   }
+   
+   addMovie(mlist: MovieList): void {
+      if (mlist.newMovieEntry &&
+         mlist.newMovieEntry.length > 0 &&
+         mlist.newMovieEntry.length <= this.movieListService.MOVIE_MAX) {
+         
+         this.movieListService.addMovie(this.user, mlist.id, mlist.newMovieEntry)
+            .then(location => {
+               console.log("resource created at: " + location);
+               //easy way for now
+               this.getMovieLists();
+            })
+            .catch(error => console.err("bad request acknowledged"));
+         
+      }
    }
    
    signIn(username: string): void {
@@ -57,7 +75,7 @@ export class AppComponent implements OnInit {
    createMovieList() {
       if (this.user && this.newMovieListName &&
          this.newMovieListName.length > 0 
-         && this.newMovieListName.length < this.movieListService.MOVIE_LIST_MAX) {
+         && this.newMovieListName.length <= this.movieListService.MOVIE_LIST_MAX) {
          
          this.movieListService.createMovieList(this.user, this.newMovieListName)
             .then(location => {
@@ -67,6 +85,7 @@ export class AppComponent implements OnInit {
             })
             .catch(error => console.log("bad request acknowledged"));
       } else {
+         // Dialog
          console.error("couldn't begin createMovieList call.");
       }
    }
