@@ -231,7 +231,7 @@ $app->post('/MovieList/{id}/Movie', function (Request $request, Response $respon
    /* CREATE RESOURCE */
    $sql = "INSERT INTO Movie (listID, movieTitle, rating) VALUES (?, ?, ?)";
    $stmt = $this->db->prepare($sql);
-   $stmt->execute($listID, $body["movieTitle"], $body["rating"]]);
+   $stmt->execute([$listID, $body["movieTitle"], $body["rating"]]);
    $insId = $this->db->lastInsertId();
    
    return $response
