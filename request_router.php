@@ -194,9 +194,9 @@ $app->get('/MovieList/{id}/Movie', function (Request $request, Response $respons
 $app->post('/MovieList/{id}/Movie', function (Request $request, Response $response) {
    global $MOVIE_MAX, $API_ERROR;
    $body = $request->getParsedBody();
+   $listID = $request->getAttribute('route')->getArgument('id');
    
    if (!isset($body["id"]) ||
-      !isset($body["listID"]) ||
       !isset($body["movieTitle"])) {
       return $response->withStatus(400)->withJson($API_ERROR["fieldMissing"]);
    }
@@ -220,7 +220,7 @@ $app->post('/MovieList/{id}/Movie', function (Request $request, Response $respon
    /* CHECK MOVIELIST */
    $sql = "SELECT id WHERE id = ?";
    $stmt = $this->db->prepare($sql);
-   $stmt->execute([$body["listID"]]);
+   $stmt->execute([$listID]);
    $movieListExists = $stmt->fetch();
    
    if (!$movieListExists) {
@@ -231,13 +231,13 @@ $app->post('/MovieList/{id}/Movie', function (Request $request, Response $respon
    /* CREATE RESOURCE */
    $sql = "INSERT INTO Movie (listID, movieTitle, rating) VALUES (?, ?, ?)";
    $stmt = $this->db->prepare($sql);
-   $stmt->execute([$body["listID"], $body["movieTitle"], $body["rating"]]);
+   $stmt->execute($listID, $body["movieTitle"], $body["rating"]]);
    $insId = $this->db->lastInsertId();
    
    return $response
            ->withStatus(201)
            ->withHeader('Access-Control-Allow-Headers', 'Location')
-           ->withHeader('Location', '/MovieList/' . $insId)
+           ->withHeader('Location', '/MovieList/' . $listID . '/' . $insId)
            ;
 });
 

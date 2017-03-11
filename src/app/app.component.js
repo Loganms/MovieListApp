@@ -30,20 +30,12 @@ var AppComponent = (function () {
         if (mlist.movies === undefined)
             this.movieListService.getMovies(mlist.id)
                 .then(function (list) { return mlist.movies = list; })
-                .catch(function (error) { return console.log("bad request acknowledged"); });
+                .catch(function (error) { return console.error("bad request acknowledged"); });
     };
     AppComponent.prototype.addMovie = function (mlist) {
-        var _this = this;
         if (mlist.newMovieEntry &&
             mlist.newMovieEntry.length > 0 &&
             mlist.newMovieEntry.length <= this.movieListService.MOVIE_MAX) {
-            this.movieListService.addMovie(this.user, mlist.id, mlist.newMovieEntry)
-                .then(function (location) {
-                console.log("resource created at: " + location);
-                //easy way for now
-                _this.getMovieLists();
-            })
-                .catch(function (error) { return console.err("bad request acknowledged"); });
         }
     };
     AppComponent.prototype.signIn = function (username) {
@@ -74,7 +66,7 @@ var AppComponent = (function () {
                 _this.newMovieListName = '';
                 _this.getMovieLists();
             })
-                .catch(function (error) { return console.log("bad request acknowledged"); });
+                .catch(function (error) { return console.error("bad request acknowledged"); });
         }
         else {
             // Dialog

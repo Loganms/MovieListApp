@@ -51,7 +51,7 @@ var MovieListService = (function () {
     // POST /MovieList/{id}/Movie
     MovieListService.prototype.createMovie = function (user, listID, movieTitle) {
         return this.http
-            .post(this.movieListsUrl + '/' + id + '/Movie', JSON.stringify({ id: user.id,
+            .post(this.movieListsUrl + '/' + listID + '/Movie', JSON.stringify({ id: user.id,
             listID: listID,
             movieTitle: movieTitle }), { headers: this.headers })
             .toPromise()

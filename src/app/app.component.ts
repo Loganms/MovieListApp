@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
       if (mlist.movies === undefined)
          this.movieListService.getMovies(mlist.id)
             .then(list => mlist.movies = list)
-            .catch(error => console.log("bad request acknowledged"));
+            .catch(error => console.error("bad request acknowledged"));
    }
    
    addMovie(mlist: MovieList): void {
@@ -44,13 +44,13 @@ export class AppComponent implements OnInit {
          mlist.newMovieEntry.length > 0 &&
          mlist.newMovieEntry.length <= this.movieListService.MOVIE_MAX) {
          
-         this.movieListService.addMovie(this.user, mlist.id, mlist.newMovieEntry)
+         /* this.movieListService.addMovie(this.user, mlist.id, mlist.newMovieEntry)
             .then(location => {
                console.log("resource created at: " + location);
                //easy way for now
                this.getMovieLists();
             })
-            .catch(error => console.err("bad request acknowledged"));
+            .catch(error => console.error("bad request acknowledged")); */
          
       }
    }
@@ -83,7 +83,7 @@ export class AppComponent implements OnInit {
                this.newMovieListName = '';
                this.getMovieLists();
             })
-            .catch(error => console.log("bad request acknowledged"));
+            .catch(error => console.error("bad request acknowledged"));
       } else {
          // Dialog
          console.error("couldn't begin createMovieList call.");

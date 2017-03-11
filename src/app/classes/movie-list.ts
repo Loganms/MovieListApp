@@ -4,5 +4,6 @@ export class MovieList {
    id: number;
    userID: number;
    listName: string;
-   movies: Movie;
+   movies: Movie[];
+   newMovieEntry?: string;
 }

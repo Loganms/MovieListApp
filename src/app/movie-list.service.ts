@@ -53,9 +53,9 @@ export class MovieListService {
    }
    
    // POST /MovieList/{id}/Movie
-   createMovie(user: User, listID: number, movieTitle: string): Promise<any> {
+   createMovie(user: User, listID: number, movieTitle: string): Promise<string> {
       return this.http
-                 .post(this.movieListsUrl + '/' + id + '/Movie',
+                 .post(this.movieListsUrl + '/' + listID + '/Movie',
                      JSON.stringify({id: user.id,
                         listID: listID,
                         movieTitle: movieTitle}),
