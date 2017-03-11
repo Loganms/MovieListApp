@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var movie_list_1 = require('./classes/movie-list');
 var movie_list_service_1 = require('./movie-list.service');
 var auth_service_1 = require('./auth.service');
 var AppComponent = (function () {
@@ -33,9 +34,14 @@ var AppComponent = (function () {
                 .catch(function (error) { return console.error("bad request acknowledged"); });
     };
     AppComponent.prototype.addMovie = function (mlist) {
-        if (mlist.newMovieEntry &&
-            mlist.newMovieEntry.length > 0 &&
-            mlist.newMovieEntry.length <= this.movieListService.MOVIE_MAX) {
+        var movie = mlist.newMovieEntry;
+        if (movie.validTitle() && movie.validRating()) {
+            this.movieListService.createMovie(this.user, mlist)
+                .catch(function (error) { return console.error("bad request acknowledged"); });
+        }
+        else {
+            //Dialog
+            console.error("couldn't begin addMovie call");
         }
     };
     AppComponent.prototype.signIn = function (username) {
@@ -57,9 +63,7 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.createMovieList = function () {
         var _this = this;
-        if (this.user && this.newMovieListName &&
-            this.newMovieListName.length > 0
-            && this.newMovieListName.length <= this.movieListService.MOVIE_LIST_MAX) {
+        if (this.user && movie_list_1.MovieList.validListName(this.newMovieListName)) {
             this.movieListService.createMovieList(this.user, this.newMovieListName)
                 .then(function (location) {
                 console.log("resource created at: " + location);

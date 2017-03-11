@@ -11,19 +11,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 require('rxjs/add/operator/toPromise');
+var movie_1 = require('./classes/movie');
 var MovieListService = (function () {
     function MovieListService(http) {
         this.http = http;
-        this.MOVIE_LIST_MAX = 40;
-        this.MOVIE_MAX = 100;
         this.headers = new http_1.Headers({ 'Content-Type': 'application/json' });
-        this.movieListsUrl = ' http://localhost/MovieList';
+        this.host = 'http://localhost';
+        this.movieListsUrl = 'http://localhost/MovieList';
     }
     // GET /MovieList
     MovieListService.prototype.getMovieLists = function () {
         return this.http.get(this.movieListsUrl)
             .toPromise()
-            .then(function (response) { return response.json(); })
+            .then(function (response) {
+            var list = response.json();
+            for (var _i = 0, list_1 = list; _i < list_1.length; _i++) {
+                var elem = list_1[_i];
+                elem.newMovieEntry = new movie_1.Movie(0, elem.id, '', 0);
+            }
+            return list;
+        })
             .catch(this.handleError);
     };
     // GET /MovieList/{id}
@@ -49,13 +56,31 @@ var MovieListService = (function () {
             .catch(this.handleError);
     };
     // POST /MovieList/{id}/Movie
-    MovieListService.prototype.createMovie = function (user, listID, movieTitle) {
+    MovieListService.prototype.createMovie = function (user, mlist) {
+        var _this = this;
+        var movie = mlist.newMovieEntry;
+        console.log(movie.rating);
+        console.log(typeof movie.rating);
         return this.http
-            .post(this.movieListsUrl + '/' + listID + '/Movie', JSON.stringify({ id: user.id,
-            listID: listID,
-            movieTitle: movieTitle }), { headers: this.headers })
+            .post(this.movieListsUrl + '/' + mlist.id + '/Movie', JSON.stringify({ id: user.id,
+            movieTitle: movie.movieTitle,
+            rating: movie.rating }), { headers: this.headers })
             .toPromise()
-            .then(function (response) { return response.headers.get('location'); })
+            .then(function (response) {
+            return _this.getMovie(_this.host +
+                response.headers.get('location'));
+        })
+            .then(function (movie) {
+            mlist.newMovieEntry.reset();
+            return mlist.movies.push(movie);
+        })
+            .catch(this.handleError);
+    };
+    // GET /MovieList/{listID}/Movie/{movieID}
+    MovieListService.prototype.getMovie = function (loc) {
+        return this.http.get(loc)
+            .toPromise()
+            .then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
     MovieListService.prototype.handleError = function (error) {

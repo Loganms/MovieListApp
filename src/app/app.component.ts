@@ -40,18 +40,14 @@ export class AppComponent implements OnInit {
    }
    
    addMovie(mlist: MovieList): void {
-      if (mlist.newMovieEntry &&
-         mlist.newMovieEntry.length > 0 &&
-         mlist.newMovieEntry.length <= this.movieListService.MOVIE_MAX) {
+      var movie = mlist.newMovieEntry;
+      if (movie.validTitle() && movie.validRating()) {
+         this.movieListService.createMovie(this.user, mlist)
+            .catch(error => console.error("bad request acknowledged"));
          
-         /* this.movieListService.addMovie(this.user, mlist.id, mlist.newMovieEntry)
-            .then(location => {
-               console.log("resource created at: " + location);
-               //easy way for now
-               this.getMovieLists();
-            })
-            .catch(error => console.error("bad request acknowledged")); */
-         
+      } else {
+         //Dialog
+         console.error("couldn't begin addMovie call");
       }
    }
    
@@ -73,9 +69,7 @@ export class AppComponent implements OnInit {
    }
    
    createMovieList() {
-      if (this.user && this.newMovieListName &&
-         this.newMovieListName.length > 0 
-         && this.newMovieListName.length <= this.movieListService.MOVIE_LIST_MAX) {
+      if (this.user && MovieList.validListName(this.newMovieListName)) {
          
          this.movieListService.createMovieList(this.user, this.newMovieListName)
             .then(location => {

@@ -218,7 +218,7 @@ $app->post('/MovieList/{id}/Movie', function (Request $request, Response $respon
    }
    
    /* CHECK MOVIELIST */
-   $sql = "SELECT id WHERE id = ?";
+   $sql = "SELECT id FROM MovieList WHERE id = ?";
    $stmt = $this->db->prepare($sql);
    $stmt->execute([$listID]);
    $movieListExists = $stmt->fetch();
@@ -237,8 +237,43 @@ $app->post('/MovieList/{id}/Movie', function (Request $request, Response $respon
    return $response
            ->withStatus(201)
            ->withHeader('Access-Control-Allow-Headers', 'Location')
-           ->withHeader('Location', '/MovieList/' . $listID . '/' . $insId)
+           ->withHeader('Location', '/MovieList/' . $listID . '/Movie/' . $insId)
            ;
+});
+
+/* Returns Movie object with id={id} from MovieList with {listID} */
+$app->get('/MovieList/{listID}/Movie/{id}', function (Request $request, Response $response) {
+   global $API_ERROR;
+   $listID = $request->getAttribute('route')->getArgument('listID');
+   $id = $request->getAttribute('route')->getArgument('id');
+   
+   /* CHECK MOVIELIST EXISTS */
+   $sql = 'SELECT id FROM MovieList WHERE id = ?';
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$listID]);
+   $movieList = $stmt->fetch(PDO::FETCH_OBJ);
+   
+   if (!$movieList) {
+      return $response
+         ->withStatus(404)
+         ->withJson($API_ERROR["resourceNotFound"]("movieList"))
+         ;
+   }
+   
+   /* GET RESOURCE */
+   $sql = 'SELECT * FROM Movie WHERE listID = ? and id = ?';
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$listID, $id]);
+   $movie = $stmt->fetch(PDO::FETCH_OBJ);
+   
+   if (!$movie) {
+      return $response
+         ->withStatus(404)
+         ->withJson($API_ERROR["resourceNotFound"]("movie"))
+         ;
+   }
+   
+   return $response->withJson($movie);
 });
 
 $app->run();

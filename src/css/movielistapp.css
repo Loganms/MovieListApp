@@ -103,5 +103,18 @@ form {
    max-width: 3em;
 }
 
+.cc-newMovieEntry{
+   color: #545454;
+}
+
+.cc-fill{
+   width:100%;
+   height:100%;
+}
+
+.cc-click{
+   cursor:pointer;
+}
+
 
 

@@ -9,10 +9,9 @@ import { User } from './classes/user';
 
 @Injectable()
 export class MovieListService {
-   public MOVIE_LIST_MAX = 40;
-   public MOVIE_MAX = 100;
    private headers = new Headers({'Content-Type': 'application/json'});
-   private movieListsUrl = ' http://localhost/MovieList';
+   private host = 'http://localhost';
+   private movieListsUrl = 'http://localhost/MovieList';
    
    constructor(private http: Http) { }
 
@@ -20,7 +19,12 @@ export class MovieListService {
    getMovieLists(): Promise<MovieList[]> {
       return this.http.get(this.movieListsUrl)
                  .toPromise()
-                 .then(response => response.json() as MovieList[])
+                 .then(response => {
+                     let list = response.json() as MovieList[];
+                     for (let elem of list)
+                        elem.newMovieEntry = new Movie(0, elem.id, '', 0);
+                     return list;
+                 })
                  .catch(this.handleError);
    }
    
@@ -53,15 +57,33 @@ export class MovieListService {
    }
    
    // POST /MovieList/{id}/Movie
-   createMovie(user: User, listID: number, movieTitle: string): Promise<string> {
+   createMovie(user: User, mlist: MovieList): Promise<string> {
+      var movie = mlist.newMovieEntry;
+      console.log(movie.rating);
+      console.log(typeof movie.rating);
       return this.http
-                 .post(this.movieListsUrl + '/' + listID + '/Movie',
+                 .post(this.movieListsUrl + '/' + mlist.id + '/Movie',
                      JSON.stringify({id: user.id,
-                        listID: listID,
-                        movieTitle: movieTitle}),
+                        movieTitle: movie.movieTitle,
+                        rating: movie.rating}),
                      {headers: this.headers})
                  .toPromise()
-                 .then(response => response.headers.get('location'))
+                 .then(response => {
+                     return this.getMovie(this.host + 
+                        response.headers.get('location'));
+                 })
+                 .then(movie => {
+                     mlist.newMovieEntry.reset();
+                     return mlist.movies.push(movie);
+                 })
+                 .catch(this.handleError);
+   }
+   
+   // GET /MovieList/{listID}/Movie/{movieID}
+   private getMovie(loc: string): Promise<Movie> {
+      return this.http.get(loc)
+                 .toPromise()
+                 .then(response => response.json() as Movie)
                  .catch(this.handleError);
    }
    

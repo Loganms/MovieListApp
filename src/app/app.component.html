@@ -8,7 +8,9 @@
    
    <div *ngIf="!signedIn">
    <label>username: </label>
-   <input [(ngModel)]="user.username" placeholder="not set">
+   <input type="text" id="username" placeholder="not set"
+      required minlength="1" maxlength="20"
+      name="username" [(ngModel)]="user.username">
    <button class="btn btn-primary navbar-btn"
            (click)=signIn(user.username)
            [disabled]="user.username.length === 0">Fake Sign In</button>
@@ -19,8 +21,9 @@
    <button class="btn btn-primary navbar-btn"
            (click)=signOut(user.username)>Sign Out</button>
    <label>New Movie List: </label>
-   <input [(ngModel)]="newMovieListName" 
-          placeholder="my movie list">
+   <input type="text" id="newMovieList" placeholder="my movie list" 
+      required minlength="1" maxlength="40" 
+      name="newMovieList" [(ngModel)]="newMovieListName">
           
    <button class="btn btn-primary navbar-btn"
       (click)=createMovieList()
@@ -40,7 +43,7 @@
          <div class="panel-body"
             [ngClass]="{'bg-primary': mlist.isExpanded}">
             
-            <div class="pull-left" (click)="mlist.isExpanded = !mlist.isExpanded;onSelectMovieList(mlist)">
+            <div class="cc-click pull-left" (click)="mlist.isExpanded = !mlist.isExpanded;onSelectMovieList(mlist)">
             <span class="cc-listName"> {{mlist.listName}} </span>
             <div class="cc-listAuthor"> By {{mlist.username}} </div>
             </div>
@@ -54,18 +57,31 @@
                   
                   <td> {{movie.movieTitle}}</td>
                   <td> {{movie.rating}} </td>
-                  <td *ngIf="mlist.userID === user.id"
-                     class="glyphicon glyphicon-wrench"></td>
+                  <td *ngIf="mlist.userID === user.id">
+                     <span class="cc-click glyphicon glyphicon-wrench"></span>
+                  </td>
                
                </tr>
-               <tr *ngIf="mlist.userID === user.id">
-                  <td><input [(ngModel)]="mlist.newMovieEntry" 
-                     placeholder="add movie entry"></td>
-                  <td><input [(ngModel)]="mlist.newMovieRating"
-                     placeholder="rating"
-                     class="cc-number-input"></td>
-                  <td class="glyphicon glyphicon-plus"
-                     (click)=addMovie(mlist)>
+               <tr *ngIf="mlist.userID === user.id" >
+                  <td>
+                     <input type="text"
+                        placeholder="add movie entry"
+                        required minlength="1" maxlength="100"
+                        name="newMovieTitle"
+                        [(ngModel)]="mlist.newMovieEntry.movieTitle"
+                        class="cc-newMovieEntry">
+                  </td>
+                  <td>
+                     <input type="number"
+                        placeholder="rating"
+                        required minlength="0" maxlength="3"
+                        size="3"
+                        [(ngModel)]="mlist.newMovieEntry.rating"                
+                        class="cc-number-input cc-newMovieEntry">
+                  </td>
+                  <td>
+                     <span class="cc-click glyphicon glyphicon-plus"
+                     (click)=addMovie(mlist)></span>
                   </td>
                   
                </tr>
