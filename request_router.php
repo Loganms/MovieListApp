@@ -164,6 +164,51 @@ $app->post('/MovieList', function (Request $request, Response $response) {
            ;
 });
 
+/* Returns one MovieList object */
+$app->delete('/MovieList/{id}', function (Request $request, Response $response) {
+   global $API_ERROR;
+   $body = $request->getParsedBody();
+   $listID = $request->getAttribute('route')->getArgument('id');
+   
+   if (!isset($body["id"])) {
+      return $response->withStatus(400)->withJson($API_ERROR["fieldMissing"]);
+   }
+   
+   /* CHECK MOVIELIST EXISTS */
+   $sql = 'SELECT id FROM MovieList WHERE id = ?';
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$listID]);
+   $movieList = $stmt->fetch(PDO::FETCH_OBJ);
+   
+   if (!$movieList) {
+      return $response
+         ->withStatus(404)
+         ->withJson($API_ERROR["resourceNotFound"]("movieList"))
+         ;
+   }
+   
+   /* CHECK USER HAS PERMISSION */
+   $sql = "SELECT U.id FROM `User` U JOIN MovieList ML ON U.id = ML.userID"
+      . " WHERE ML.id = ? and U.id = ?";
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$listID, $body["id"]]);
+   $userHasPerms = $stmt->fetch();
+   
+   if (!$userHasPerms) {
+      return $response
+         ->withStatus(401)
+         ->withJson($API_ERROR["accessDenied"]("movieList"))
+         ;
+   }
+   
+   /* DELETE RESOURCE */
+   $sql = 'DELETE FROM MovieList WHERE id = ?';
+   $stmt = $this->db->prepare($sql);
+   $stmt->execute([$listID]);
+   
+   return $response->withStatus(200);
+});
+
 /* Returns possibly empty array of Movie objects from MovieList with {id} */
 $app->get('/MovieList/{id}/Movie', function (Request $request, Response $response) {
    global $API_ERROR;

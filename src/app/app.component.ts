@@ -31,12 +31,52 @@ export class AppComponent implements OnInit {
    ngOnInit(): void {
       this.getMovieLists();
    }
-      
+     
    onSelectMovieList(mlist: MovieList): void {
       if (mlist.movies === undefined)
          this.movieListService.getMovies(mlist.id)
             .then(list => mlist.movies = list)
-            .catch(error => console.error("bad request acknowledged"));
+            .catch(error => console.error("DIALOG: bad request acknowledged"));
+   }
+   
+   /* API wrappers */
+   getMovieLists(): void {
+      this.movieListService.getMovieLists()
+         .then(mlists => this.movieLists = mlists);
+   } 
+   
+   createMovieList() {
+      if (this.user && MovieList.validListName(this.newMovieListName)) {
+         
+         this.movieListService.createMovieList(this.user, this.newMovieListName)
+            .then(location => {
+               console.log("resource created at: " + location);
+               this.newMovieListName = '';
+               this.getMovieLists();
+            })
+            .catch(error => console.error("DIALOG: bad request acknowledged"));
+      } else {
+         console.error("DIALOG: couldn't begin createMovieList call.");
+      }
+   }
+   
+   deleteMovieList(mlist: MovieList): void {
+      // NEED CONFIRM DIALOG!!!
+   
+      if (this.user) {
+         this.movieListService.deleteMovieList(this.user, mlist)
+            .then(status => {
+               for(let i = this.movieLists.length - 1; i >= 0; i--) {
+                  if (this.movieLists[i].id === mlist.id) {
+                     this.movieLists.splice(i, 1);
+                     break;
+                  }
+               }
+            })
+            .catch(error => console.error("DIALOG: bad request acknowledged"));  
+      } else {
+         console.error("DIALOG: couldn't begin deleteMovieList call.")
+      }
    }
    
    addMovie(mlist: MovieList): void {
@@ -46,8 +86,7 @@ export class AppComponent implements OnInit {
             .catch(error => console.error("bad request acknowledged"));
          
       } else {
-         //Dialog
-         console.error("couldn't begin addMovie call");
+         console.error("DIALOG: couldn't begin addMovie call");
       }
    }
    
@@ -66,26 +105,5 @@ export class AppComponent implements OnInit {
             this.user.username = '';
             this.signedIn = false;
          });
-   }
-   
-   createMovieList() {
-      if (this.user && MovieList.validListName(this.newMovieListName)) {
-         
-         this.movieListService.createMovieList(this.user, this.newMovieListName)
-            .then(location => {
-               console.log("resource created at: " + location);
-               this.newMovieListName = '';
-               this.getMovieLists();
-            })
-            .catch(error => console.error("bad request acknowledged"));
-      } else {
-         // Dialog
-         console.error("couldn't begin createMovieList call.");
-      }
-   }
-   
-   getMovieLists(): void {
-      this.movieListService.getMovieLists()
-         .then(mlists => this.movieLists = mlists);
    }
 }

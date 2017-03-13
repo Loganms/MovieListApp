@@ -9,6 +9,10 @@ $API_ERROR = array(
          return (object)['message' => 'resource already exists',
                          'resource' => $resource];
    },
+   "accessDenied" => function ($resource) {
+         return (object)['message' => 'access denied',
+                         'resource' => $resource];
+   },
    "fieldMissing" => (object) ['message' => 'a required field is missing'],
    "stringLength" => (object) ['message' => 'max or min string length not observed']
 

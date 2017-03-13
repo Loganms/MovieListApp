@@ -31,7 +31,47 @@ var AppComponent = (function () {
         if (mlist.movies === undefined)
             this.movieListService.getMovies(mlist.id)
                 .then(function (list) { return mlist.movies = list; })
-                .catch(function (error) { return console.error("bad request acknowledged"); });
+                .catch(function (error) { return console.error("DIALOG: bad request acknowledged"); });
+    };
+    /* API wrappers */
+    AppComponent.prototype.getMovieLists = function () {
+        var _this = this;
+        this.movieListService.getMovieLists()
+            .then(function (mlists) { return _this.movieLists = mlists; });
+    };
+    AppComponent.prototype.createMovieList = function () {
+        var _this = this;
+        if (this.user && movie_list_1.MovieList.validListName(this.newMovieListName)) {
+            this.movieListService.createMovieList(this.user, this.newMovieListName)
+                .then(function (location) {
+                console.log("resource created at: " + location);
+                _this.newMovieListName = '';
+                _this.getMovieLists();
+            })
+                .catch(function (error) { return console.error("DIALOG: bad request acknowledged"); });
+        }
+        else {
+            console.error("DIALOG: couldn't begin createMovieList call.");
+        }
+    };
+    AppComponent.prototype.deleteMovieList = function (mlist) {
+        // NEED CONFIRM DIALOG!!!
+        var _this = this;
+        if (this.user) {
+            this.movieListService.deleteMovieList(this.user, mlist)
+                .then(function (status) {
+                for (var i = _this.movieLists.length - 1; i >= 0; i--) {
+                    if (_this.movieLists[i].id === mlist.id) {
+                        _this.movieLists.splice(i, 1);
+                        break;
+                    }
+                }
+            })
+                .catch(function (error) { return console.error("DIALOG: bad request acknowledged"); });
+        }
+        else {
+            console.error("DIALOG: couldn't begin deleteMovieList call.");
+        }
     };
     AppComponent.prototype.addMovie = function (mlist) {
         var movie = mlist.newMovieEntry;
@@ -40,8 +80,7 @@ var AppComponent = (function () {
                 .catch(function (error) { return console.error("bad request acknowledged"); });
         }
         else {
-            //Dialog
-            console.error("couldn't begin addMovie call");
+            console.error("DIALOG: couldn't begin addMovie call");
         }
     };
     AppComponent.prototype.signIn = function (username) {
@@ -60,27 +99,6 @@ var AppComponent = (function () {
             _this.user.username = '';
             _this.signedIn = false;
         });
-    };
-    AppComponent.prototype.createMovieList = function () {
-        var _this = this;
-        if (this.user && movie_list_1.MovieList.validListName(this.newMovieListName)) {
-            this.movieListService.createMovieList(this.user, this.newMovieListName)
-                .then(function (location) {
-                console.log("resource created at: " + location);
-                _this.newMovieListName = '';
-                _this.getMovieLists();
-            })
-                .catch(function (error) { return console.error("bad request acknowledged"); });
-        }
-        else {
-            // Dialog
-            console.error("couldn't begin createMovieList call.");
-        }
-    };
-    AppComponent.prototype.getMovieLists = function () {
-        var _this = this;
-        this.movieListService.getMovieLists()
-            .then(function (mlists) { return _this.movieLists = mlists; });
     };
     AppComponent = __decorate([
         core_1.Component({

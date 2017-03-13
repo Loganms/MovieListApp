@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers, Http, RequestOptions } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -45,6 +45,20 @@ export class MovieListService {
                      {headers: this.headers})
                  .toPromise()
                  .then(response => response.headers.get('location'))
+                 .catch(this.handleError);
+   }
+   
+   // DELETE /MovieList/{id}
+   deleteMovieList(user: User, mlist: MovieList): Promise<string> {
+      return this.http
+                 .delete(this.movieListsUrl + "/" + mlist.id,
+                     new RequestOptions({
+                        body: JSON.stringify({id: user.id}),
+                        headers: this.headers
+                     })
+                  )
+                 .toPromise()
+                 .then(response => "OK")
                  .catch(this.handleError);
    }
    

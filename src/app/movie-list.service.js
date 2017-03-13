@@ -48,6 +48,17 @@ var MovieListService = (function () {
             .then(function (response) { return response.headers.get('location'); })
             .catch(this.handleError);
     };
+    // DELETE /MovieList/{id}
+    MovieListService.prototype.deleteMovieList = function (user, mlist) {
+        return this.http
+            .delete(this.movieListsUrl + "/" + mlist.id, new http_1.RequestOptions({
+            body: JSON.stringify({ id: user.id }),
+            headers: this.headers
+        }))
+            .toPromise()
+            .then(function (response) { return "OK"; })
+            .catch(this.handleError);
+    };
     // GET /MovieList/{id}/Movie
     MovieListService.prototype.getMovies = function (id) {
         return this.http.get(this.movieListsUrl + '/' + id + '/Movie')

@@ -48,8 +48,10 @@
             <div class="cc-listAuthor"> By {{mlist.username}} </div>
             </div>
             
-            <span *ngIf="mlist.userID === user.id"
-               class="pull-right glyphicon glyphicon-trash"></span>
+            <span *ngIf="(mlist.userID === user.id) &&
+               mlist.isExpanded"
+               class="cc-click pull-right glyphicon glyphicon-trash"
+               (click)=deleteMovieList(mlist)></span>
             
             <div *ngIf="mlist.movies !== undefined && mlist.isExpanded">
                <table class="table table-hover">
