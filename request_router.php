@@ -35,7 +35,7 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 $app->add(function ($req, $res, $next) {
     $response = $next($req, $res);
     return $response
-            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+            ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization, Location')
             ->withHeader('Access-Control-Expose-Headers', 'Location')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -65,7 +65,7 @@ $app->put('/User', function (Request $request, Response $response) {
       $user = $stmt->fetch(PDO::FETCH_OBJ);
       return $response->withJson($user);
    } else {
-      $sql = "INSERT IGNORE INTO `User` (username) VALUES (?)";
+      $sql = "INSERT INTO `User` (username) VALUES (?)";
       $stmt = $this->db->prepare($sql);
       $stmt->execute([$body["username"]]);
       $insId = $this->db->lastInsertId();

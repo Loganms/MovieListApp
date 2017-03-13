@@ -1,0 +1,368 @@
+{
+	"variables": [],
+	"info": {
+		"name": "MovieListApp Test Suite",
+		"_postman_id": "e0c0c759-74a4-eefd-e9a0-a1925ae7a024",
+		"description": "Author: Logan Scheiner\n\nTesting of the MovieListApp REST API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get MovieList All",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 200\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"listName\": \"Fresh List Newly Created\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "{{url}}/User",
+			"request": {
+				"url": "{{url}}/User",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"Joeseph\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Post MovieList Fail (Missing Both Fields)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 400\"] = responseCode.code === 400;",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Got correct error\"] = jsonData.message === 'a required field is missing';"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Post MovieList Fail (Missing listName)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 400\"] = responseCode.code === 400;",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Got correct error\"] = jsonData.message === 'a required field is missing';"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Post MovieList Fail (Missing id)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 400\"] = responseCode.code === 400;",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Got correct error\"] = jsonData.message === 'a required field is missing';"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"listName\": \"Best List Name\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Post MovieList Fail (User does not exist)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 404\"] = responseCode.code === 404;",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Got correct error\"] = jsonData.message === 'resource not found';"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 0,\n\t\"listName\": \"Best List Name\"\n}"
+				},
+				"description": "Attempt to post a new MovieList under the id of a user that does not exist."
+			},
+			"response": []
+		},
+		{
+			"name": "Post MovieList",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 201\"] = responseCode.code === 201;",
+							"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+							"",
+							"postman.setEnvironmentVariable(\"movieListId\", attURL[attURL.length-1]);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"listName\": \"Fresh List Newly Created\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get MovieList",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 200\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList/{{movieListId}}",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"listName\": \"Fresh List Newly Created\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get MovieList Fail (resource does not exist)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 404\"] = responseCode.code === 404;",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Got correct error\"] = jsonData.message === 'resource not found' ",
+							"                            && jsonData.resource === 'movieList';"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList/0",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"listName\": \"Fresh List Newly Created\"\n}"
+				},
+				"description": "Try to GET a MovieList with an Id that does not exist (0)."
+			},
+			"response": []
+		},
+		{
+			"name": "Get MovieList",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 200\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList/1",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"listName\": \"Fresh List Newly Created\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Post Movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 201\"] = responseCode.code === 201;",
+							"var attURL = postman.getResponseHeader(\"Location\").split('/');",
+							"",
+							"postman.setEnvironmentVariable(\"movieId\", attURL[attURL.length-1]);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList/16/Movie",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"movieTitle\": \"testY\",\n\t\"rating\": 19\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get Movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Code 200\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/MovieList/{{movieListId}}/Movie/{{movieId}}",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 1,\n\t\"listName\": \"Fresh List Newly Created\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
