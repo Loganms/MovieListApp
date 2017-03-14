@@ -99,7 +99,9 @@ $app->get('/MovieList/{id}', function (Request $request, Response $response) {
    global $API_ERROR;
    $id = $request->getAttribute('route')->getArgument('id');
    
-   $sql = 'SELECT * FROM MovieList WHERE id = ?';
+   $sql = 'SELECT M.id, userID, listName, username'
+         .' FROM MovieList M JOIN `User` U ON M.userID = U.id'
+         .' WHERE M.id = ?';
    $stmt = $this->db->prepare($sql);
    $stmt->execute([$id]);
    $movieList = $stmt->fetch(PDO::FETCH_OBJ);

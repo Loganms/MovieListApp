@@ -48,11 +48,12 @@ export class AppComponent implements OnInit {
    createMovieList() {
       if (this.user && MovieList.validListName(this.newMovieListName)) {
          
-         this.movieListService.createMovieList(this.user, this.newMovieListName)
-            .then(location => {
-               console.log("resource created at: " + location);
+         this.movieListService.createMovieList(this.user, this.newMovieListName,
+          this.movieLists)
+            .then(status => {
                this.newMovieListName = '';
-               this.getMovieLists();
+               console.error(JSON.stringify(this.movieLists[0]));
+               console.error(JSON.stringify(this.movieLists[1]));
             })
             .catch(error => console.error("DIALOG: bad request acknowledged"));
       } else {

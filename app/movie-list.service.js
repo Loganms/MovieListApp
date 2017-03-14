@@ -16,13 +16,12 @@ var MovieListService = (function () {
     function MovieListService(http) {
         this.http = http;
         this.headers = new http_1.Headers({ 'Content-Type': 'application/json' });
-        this.noCache = new http_1.Headers({ 'Cache-Control': 'no-cache' });
         this.host = ''; //'http://localhost';
         this.movieListsUrl = 'MovieList'; //'http://localhost/MovieList';
     }
     // GET /MovieList
     MovieListService.prototype.getMovieLists = function () {
-        return this.http.get(this.movieListsUrl, new http_1.RequestOptions({ headers: this.noCache }))
+        return this.http.get(this.movieListsUrl)
             .toPromise()
             .then(function (response) {
             var list = response.json();
@@ -36,17 +35,26 @@ var MovieListService = (function () {
     };
     // GET /MovieList/{id}
     MovieListService.prototype.getMovieList = function (id) {
-        return this.http.get(this.movieListsUrl)
+        return this.http.get(this.movieListsUrl + '/' + id)
             .toPromise()
             .then(function (response) { return response.json(); })
             .catch(this.handleError);
     };
     // POST /MovieList
-    MovieListService.prototype.createMovieList = function (user, listName) {
+    MovieListService.prototype.createMovieList = function (user, listName, mlists) {
+        var _this = this;
         return this.http
             .post(this.movieListsUrl, JSON.stringify({ id: user.id, listName: listName }), { headers: this.headers })
             .toPromise()
-            .then(function (response) { return response.headers.get('location'); })
+            .then(function (response) {
+            var listID = response.headers.get('location').split('/');
+            return _this.getMovieList(Number(listID[listID.length - 1]));
+        })
+            .then(function (movieList) {
+            movieList.newMovieEntry = new movie_1.Movie(0, movieList.id, '', 0);
+            mlists.unshift(movieList);
+            return "OK";
+        })
             .catch(this.handleError);
     };
     // DELETE /MovieList/{id}

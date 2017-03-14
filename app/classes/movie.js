@@ -15,6 +15,7 @@ var Movie = (function () {
     };
     Movie.prototype.validRating = function () {
         //unsure right now what makes for a valid rating
+        //just needs to be number?
         return typeof (this.rating) === typeof (1);
     };
     Movie.prototype.reset = function () {

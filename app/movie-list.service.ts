@@ -10,7 +10,6 @@ import { User } from './classes/user';
 @Injectable()
 export class MovieListService {
    private headers = new Headers({'Content-Type': 'application/json'});
-   private noCache = new Headers({'Cache-Control': 'no-cache'});
    private host = '';//'http://localhost';
    private movieListsUrl = 'MovieList';//'http://localhost/MovieList';
    
@@ -18,8 +17,7 @@ export class MovieListService {
 
    // GET /MovieList
    getMovieLists(): Promise<MovieList[]> {
-      return this.http.get(this.movieListsUrl,
-         new RequestOptions({headers: this.noCache}))
+      return this.http.get(this.movieListsUrl)
                  .toPromise()
                  .then(response => {
                      let list = response.json() as MovieList[];
@@ -32,7 +30,7 @@ export class MovieListService {
    
    // GET /MovieList/{id}
    getMovieList(id: number): Promise<MovieList> {
-      return this.http.get(this.movieListsUrl)
+      return this.http.get(this.movieListsUrl + '/' + id)
                  .toPromise()
                  .then(response => response.json() as MovieList)
                  .catch(this.handleError);
@@ -40,13 +38,22 @@ export class MovieListService {
 
    
    // POST /MovieList
-   createMovieList(user: User, listName: string): Promise<string> {
+   createMovieList(user: User, listName: string,
+    mlists: MovieList[]): Promise<string> {
       return this.http
                  .post(this.movieListsUrl,
                      JSON.stringify({id: user.id, listName: listName}),
                      {headers: this.headers})
                  .toPromise()
-                 .then(response => response.headers.get('location'))
+                 .then(response => {
+                     let listID = response.headers.get('location').split('/');
+                     return this.getMovieList(Number(listID[listID.length - 1]));
+                 })
+                 .then(movieList => {
+                     movieList.newMovieEntry = new Movie(0, movieList.id, '', 0);
+                     mlists.unshift(movieList);
+                     return "OK";
+                 })
                  .catch(this.handleError);
    }
    

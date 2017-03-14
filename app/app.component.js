@@ -42,11 +42,11 @@ var AppComponent = (function () {
     AppComponent.prototype.createMovieList = function () {
         var _this = this;
         if (this.user && movie_list_1.MovieList.validListName(this.newMovieListName)) {
-            this.movieListService.createMovieList(this.user, this.newMovieListName)
-                .then(function (location) {
-                console.log("resource created at: " + location);
+            this.movieListService.createMovieList(this.user, this.newMovieListName, this.movieLists)
+                .then(function (status) {
                 _this.newMovieListName = '';
-                _this.getMovieLists();
+                console.error(JSON.stringify(_this.movieLists[0]));
+                console.error(JSON.stringify(_this.movieLists[1]));
             })
                 .catch(function (error) { return console.error("DIALOG: bad request acknowledged"); });
         }
